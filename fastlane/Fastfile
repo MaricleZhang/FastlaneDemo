@@ -25,7 +25,7 @@ platform :ios do
   lane :development do |options|
     #setup_jenkins(keychain_password:"1234")
     clear_derived_data(derived_data_path: "./DerivedData")
-    # match(type: "development", force_for_new_devices: false, readonly: true)
+    match(type: "development", force_for_new_devices: false, readonly: true)
     gym(scheme: "FastlaneDemo",
       workspace: "FastlaneDemo.xcworkspace",
       configuration: "Debug",
