@@ -20,4 +20,23 @@ platform :ios do
   lane :custom_lane do
     # add actions here: https://docs.fastlane.tools/actions
   end
+
+  desc "打development包"
+  lane :development do |options|
+    #setup_jenkins(keychain_password:"1234")
+    clear_derived_data(derived_data_path: "./DerivedData")
+    match(type: "development", force_for_new_devices: false, readonly: true)
+    gym(scheme: "FastlaneDemo",
+      workspace: "FastlaneDemo.xcworkspace",
+      configuration: "Debug",
+      export_method: "development",
+      output_directory: "./build",
+      output_name: "FastlaneDemo.ipa",
+      silent: false,
+      include_symbols: true,
+      derived_data_path: "./DerivedData",
+      # clean:true,
+      xcargs: "-UseNewBuildSystem=NO"
+  )
+  end
 end
