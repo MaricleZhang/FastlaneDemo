@@ -23,17 +23,16 @@ platform :ios do
 
   desc "打development包"
   lane :development do |options|
-    #setup_jenkins(keychain_password:"1234")
-    clear_derived_data(derived_data_path: "./DerivedData")
-    match(type: "development", force_for_new_devices: false, readonly: true)
+    clear_derived_data(derived_data_path: "./DerivedData") # 清除本地编译缓存
+    match(type: "development", force_for_new_devices: false, readonly: true) # fastlane match 管理证书
     gym(scheme: "FastlaneDemo",
       workspace: "FastlaneDemo.xcworkspace",
       configuration: "Debug",
-      export_method: "development",
-      output_directory: "./build",
-      output_name: "FastlaneDemo.ipa",
+      export_method: "development",#打包的类型
+      output_directory: "./build",#生成的ipa路径
+      output_name: "FastlaneDemo.ipa",#生成的ipa文件名
       silent: false,
-      include_symbols: true,
+      include_symbols: true,# 是否包含符号表
       derived_data_path: "./DerivedData",
       # clean:true,
       xcargs: "-UseNewBuildSystem=NO"
