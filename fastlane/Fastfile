@@ -21,6 +21,30 @@ platform :ios do
     # add actions here: https://docs.fastlane.tools/actions
   end
 
+  desc "添加设备"
+  lane :add_device do
+    device_name = prompt(text: "Enter the device name: ")
+    device_udid = prompt(text: "Enter the device UDID: ")
+    register_devices( devices: { device_name => device_udid } )
+    # match(type: "adhoc", app_identifier: identifiers, force_for_new_devices: true)
+    # match(type: "appstore", app_identifier: identifiers, force_for_new_devices: true)
+    match(type: "development", force_for_new_devices: true)
+  end
+
+ #adhoc打包
+  lane :adhoc do     #adhoc为任务名
+  sigh
+  desc "ad-hoc"
+  gym(
+    scheme: "FastlaneDemo",   #工程下要打包的项目,如果一个工程有多个项目则用[项目1,项目2]
+    workspace: "FastlaneDemo.xcworkspace",
+    export_method: "ad-hoc", #打包的方式, development/adhoc/enterprise/appstore
+    output_directory: './build',  #指定ipa最后输出的目录
+    )
+  #pgyer(api_key: "api key", user_key: "user key", update_description: "测试自动打包上传")#上传到蒲公英
+  # firim(firim_api_token: [firim_api_token]) #上传到firim
+end
+
   desc "打development包"
   lane :development do |options|
     clear_derived_data(derived_data_path: "./DerivedData") # 清除本地编译缓存
@@ -38,4 +62,26 @@ platform :ios do
       xcargs: "-UseNewBuildSystem=NO"
   )
   end
+
+  desc "打App Store包"
+  lane :release do
+    #xcode_select("/Applications/Xcode.11.3.1.app")
+    #setup_jenkins(keychain_password:"1234")
+    clear_derived_data(derived_data_path: "./DerivedData")
+    match(type: "appstore", force_for_new_devices: false, readonly: true)
+    gym(scheme: "FastlaneDemo",
+      workspace: "FastlaneDemo.xcworkspace",
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./build",
+      output_name: "FastlaneDemo.ipa",
+      #silent: false,
+      include_symbols: true,
+      derived_data_path: "./DerivedData",
+      # clean:true,
+      xcargs: "-UseNewBuildSystem=NO"
+    )
+    #pilot #(skip_submission: true) # to only upload the build
+  end
+
 end
